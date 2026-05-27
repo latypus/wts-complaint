@@ -3,16 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waste Transfer Station Complaint</title>
+  <title>Waste Transfer Station Complaint — EJ Coalition Evanston</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --green:       #1a6b3c;
-      --green-dark:  #145530;
-      --green-light: #e8f5ee;
-      --green-mid:   #a7d7bb;
-      --red:         #dc2626;
-      --g50:  #f9fafb;
-      --g100: #f3f4f6;
+      --primary:       #D3413F;
+      --primary-dark:  #B83532;
+      --primary-light: #fdf0f0;
+      --primary-mid:   #f0bfbe;
+      --err:           #dc2626;
+      --dark:          #1F1F1F;
+      --g50:  #f9f9f9;
+      --g100: #f4f4f4;
       --g200: #e5e7eb;
       --g300: #d1d5db;
       --g400: #9ca3af;
@@ -26,39 +30,71 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Open Sans', sans-serif;
       background: var(--g100);
       color: var(--g800);
       line-height: 1.5;
-      padding: 2rem 1rem 3rem;
+      padding: 0 0 3rem;
       min-height: 100vh;
     }
 
-    .container { max-width: 680px; margin: 0 auto; }
+    .container { max-width: 680px; margin: 0 auto; padding: 0 1rem; }
 
     /* ─── Header ─────────────────────────────────── */
-    .site-header { text-align: center; margin-bottom: 2rem; }
-    .site-header .logo { font-size: 2.75rem; margin-bottom: .5rem; }
-    .site-header h1 {
-      font-size: 1.75rem; font-weight: 700;
-      color: var(--g900); margin-bottom: .375rem;
+    .site-header {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 2.25rem 1rem 2rem;
+      margin-bottom: 2rem;
     }
-    .site-header p { color: var(--g500); font-size: .9375rem; }
+    .site-header .org-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: .875rem;
+      font-weight: 400;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: .625rem;
+    }
+    .site-header h1 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2rem; font-weight: 700;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: .5rem;
+      line-height: 1.2;
+    }
+    .site-header p {
+      color: rgba(255,255,255,.65);
+      font-size: .9375rem;
+    }
+    .header-rule {
+      width: 48px; height: 3px;
+      background: var(--primary);
+      margin: .875rem auto 0;
+      border: none;
+    }
 
     /* ─── Card ───────────────────────────────────── */
     .card {
       background: #fff;
-      border-radius: 10px;
+      border-radius: 4px;
       box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
       padding: 1.75rem;
       margin-bottom: 1.25rem;
     }
     .card-title {
-      font-size: 1rem; font-weight: 600; color: var(--green);
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.0625rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--dark);
       margin-bottom: 1.25rem;
       display: flex; align-items: center; gap: .5rem;
     }
-    .card-title::after { content:''; flex:1; height:1px; background:var(--g200); }
+    .card-title::before { content:''; width:4px; height:1.1em; background:var(--primary); flex-shrink:0; border-radius:1px; }
+    .card-title::after  { content:''; flex:1; height:1px; background:var(--g200); }
 
     /* ─── Grid ───────────────────────────────────── */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -66,9 +102,9 @@
 
     /* ─── Form groups ────────────────────────────── */
     .fg { display: flex; flex-direction: column; gap: .3rem; }
-    label { font-size: .875rem; font-weight: 500; color: var(--g700); }
+    label { font-size: .875rem; font-weight: 600; color: var(--g700); }
     .opt { font-weight: 400; color: var(--g400); font-size: .8125rem; }
-    .req { color: var(--red); margin-left: .1rem; }
+    .req { color: var(--primary); margin-left: .1rem; }
 
     input[type=text],
     input[type=email],
@@ -78,7 +114,7 @@
       width: 100%;
       padding: .625rem .875rem;
       border: 1.5px solid var(--g300);
-      border-radius: 7px;
+      border-radius: 3px;
       font-size: .9375rem;
       color: var(--g800);
       background: #fff;
@@ -88,12 +124,12 @@
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(26,107,60,.12);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(211,65,63,.12);
     }
-    .invalid { border-color: var(--red) !important; }
+    .invalid { border-color: var(--err) !important; }
     .err {
-      font-size: .8125rem; color: var(--red); display: none;
+      font-size: .8125rem; color: var(--err); display: none;
     }
     .err.on { display: block; }
 
@@ -119,8 +155,8 @@
       transition: border-color .15s, background .15s;
     }
     .upload-zone:hover, .upload-zone.over {
-      border-color: var(--green);
-      background: var(--green-light);
+      border-color: var(--primary);
+      background: var(--primary-light);
     }
     .upload-zone input[type=file] {
       position: absolute; inset: 0;
@@ -151,21 +187,22 @@
       border-radius: 4px; line-height: 1; flex-shrink: 0;
       transition: color .15s, background .15s;
     }
-    .pill button:hover { color: var(--red); background: #fee2e2; }
+    .pill button:hover { color: var(--err); background: #fee2e2; }
     .tally { font-size: .8rem; color: var(--g400); text-align: right; margin-top: .4rem; }
-    .tally.full { color: var(--green); font-weight: 500; }
+    .tally.full { color: var(--primary); font-weight: 500; }
 
     /* hidden file inputs */
     .hfi { display: none; }
 
     /* ─── Info note ──────────────────────────────── */
     .note {
-      background: var(--green-light);
-      border: 1px solid var(--green-mid);
-      border-radius: 7px;
+      background: var(--primary-light);
+      border: 1px solid var(--primary-mid);
+      border-radius: 3px;
+      border-left: 4px solid var(--primary);
       padding: .75rem 1rem;
       font-size: .85rem;
-      color: var(--green-dark);
+      color: var(--g700);
       margin-top: .25rem;
     }
 
@@ -174,14 +211,16 @@
     .btn-submit {
       width: 100%;
       padding: .9rem 1.5rem;
-      background: var(--green);
+      background: var(--primary);
       color: #fff;
-      border: none; border-radius: 8px;
-      font-size: 1rem; font-weight: 600;
-      cursor: pointer; font-family: inherit;
+      border: none; border-radius: 3px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.0625rem; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      cursor: pointer;
       transition: background .15s, opacity .15s;
     }
-    .btn-submit:hover { background: var(--green-dark); }
+    .btn-submit:hover { background: var(--primary-dark); }
     .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
 
     /* ─── Success page ───────────────────────────── */
@@ -189,18 +228,26 @@
       text-align: center;
       padding: 4rem 1.5rem;
       background: #fff;
-      border-radius: 12px;
+      border-radius: 4px;
       box-shadow: 0 1px 3px rgba(0,0,0,.08);
     }
     .success-page .check { font-size: 4.5rem; margin-bottom: 1rem; }
-    .success-page h2 { font-size: 1.625rem; font-weight: 700; margin-bottom: .625rem; color: var(--g900); }
+    .success-page h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .04em;
+      margin-bottom: .625rem; color: var(--g900);
+    }
     .success-page p { color: var(--g500); max-width: 380px; margin: 0 auto 2rem; }
     .btn-again {
-      padding: .75rem 1.5rem; background: var(--green); color: #fff;
-      border: none; border-radius: 8px; font-size: .9375rem; font-weight: 600;
-      cursor: pointer; font-family: inherit; transition: background .15s;
+      padding: .75rem 1.5rem; background: var(--primary); color: #fff;
+      border: none; border-radius: 3px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      cursor: pointer; transition: background .15s;
     }
-    .btn-again:hover { background: var(--green-dark); }
+    .btn-again:hover { background: var(--primary-dark); }
 
     /* ─── Error banner ───────────────────────────── */
     .banner {
@@ -246,9 +293,10 @@
   <div id="formPage">
 
     <header class="site-header">
-      <div class="logo">🏭</div>
-      <h1>Waste Transfer Station Complaint</h1>
-      <p>Submit a complaint to the Environmental Justice Coalition</p>
+      <div class="org-name">EJ Coalition Evanston</div>
+      <h1>Waste Transfer Station<br>Complaint Form</h1>
+      <p>Submit a complaint to the Evanston Environmental Justice Coalition</p>
+      <hr class="header-rule">
     </header>
 
     <form id="complaintForm" novalidate>
