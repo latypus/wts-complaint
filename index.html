@@ -251,12 +251,26 @@
       <p>Submit a complaint to the Environmental Justice Coalition</p>
     </header>
 
-    <form id="complaintForm" novalidate>
-      <!--
-        Web3Forms access key — get yours free at https://web3forms.com
-        Enter EJCoalitionWTS@gmail.com, copy the key they email you, paste below.
-      -->
-      <input type="hidden" id="w3f_key" value="2e92acf8-319f-481a-8229-98944bad6c60">
+    <form
+      id="complaintForm"
+      name="wts-complaint"
+      method="POST"
+      action="?submitted=1"
+      enctype="multipart/form-data"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      novalidate
+    >
+      <input type="hidden" name="form-name" value="wts-complaint">
+      <p style="display:none"><input name="bot-field"></p>
+      <!-- Hidden file inputs populated via DataTransfer before submit -->
+      <div style="display:none">
+        <input type="file" name="photo_1" id="hf1">
+        <input type="file" name="photo_2" id="hf2">
+        <input type="file" name="photo_3" id="hf3">
+        <input type="file" name="photo_4" id="hf4">
+        <input type="file" name="photo_5" id="hf5">
+      </div>
 
       <!-- ══════════ CONTACT INFORMATION ══════════ -->
       <div class="card">
@@ -370,8 +384,6 @@
         will go directly to the email address you provided above.
       </div>
 
-      <div class="banner error" id="errBanner"></div>
-
       <div class="submit-wrap">
         <button type="submit" class="btn-submit" id="submitBtn">
           Submit Complaint
@@ -387,7 +399,13 @@
 (function () {
   'use strict';
 
-  /* ── File upload ─────────────────────────────────── */
+  /* ── Show success screen when Netlify redirects back ── */
+  if (new URLSearchParams(location.search).get('submitted') === '1') {
+    document.getElementById('formPage').style.display    = 'none';
+    document.getElementById('successPage').style.display = '';
+  }
+
+  /* ── File upload UI ─────────────────────────────── */
   var MAX_FILES     = 5;
   var selectedFiles = [];
 
@@ -395,10 +413,12 @@
   var picker  = document.getElementById('f_files');
   var listEl  = document.getElementById('fileList');
   var tallyEl = document.getElementById('tally');
+  var hiddenInputs = [1,2,3,4,5].map(function (n) {
+    return document.getElementById('hf' + n);
+  });
 
   picker.addEventListener('change', function () {
-    addFiles(Array.from(picker.files));
-    picker.value = '';
+    addFiles(Array.from(picker.files)); picker.value = '';
   });
   zone.addEventListener('dragover',  function (e) { e.preventDefault(); zone.classList.add('over'); });
   zone.addEventListener('dragleave', function ()  { zone.classList.remove('over'); });
@@ -435,8 +455,8 @@
       listEl.appendChild(pill);
     });
     var cnt = selectedFiles.length;
-    tallyEl.textContent  = cnt + ' / ' + MAX_FILES + ' file' + (cnt !== 1 ? 's' : '') + ' selected';
-    tallyEl.className    = 'tally' + (cnt >= MAX_FILES ? ' full' : '');
+    tallyEl.textContent   = cnt + ' / ' + MAX_FILES + ' file' + (cnt !== 1 ? 's' : '') + ' selected';
+    tallyEl.className     = 'tally' + (cnt >= MAX_FILES ? ' full' : '');
     tallyEl.style.display = 'block';
   }
 
@@ -449,7 +469,7 @@
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  /* ── Validation helper ───────────────────────────── */
+  /* ── Validation helper ──────────────────────────── */
   function check(fieldId, errId, testFn) {
     var el = document.getElementById(fieldId);
     var ok = testFn(el);
@@ -458,7 +478,7 @@
     return ok;
   }
 
-  /* ── Form submit via Web3Forms AJAX ─────────────── */
+  /* ── Submit: validate → populate file inputs → submit ── */
   document.getElementById('complaintForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -477,50 +497,20 @@
       return;
     }
 
-    var btn    = document.getElementById('submitBtn');
-    var banner = document.getElementById('errBanner');
-    btn.disabled    = true;
-    btn.textContent = 'Submitting…';
-    banner.classList.remove('show');
-
-    /* Build FormData for Web3Forms */
-    var fd = new FormData();
-    fd.append('access_key', document.getElementById('w3f_key').value);
-    fd.append('subject',    document.getElementById('f_subject').value.trim() || 'Waste Transfer Station Complaint');
-    fd.append('replyto',    document.getElementById('f_email').value.trim());
-    fd.append('name',       document.getElementById('f_name').value.trim());
-    fd.append('email',      document.getElementById('f_email').value.trim());
-
-    var addr  = document.getElementById('f_address').value.trim();
-    var ward  = document.getElementById('f_ward').value.trim();
-    var phone = document.getElementById('f_phone').value.trim();
-    if (addr)  fd.append('address',        addr);
-    if (ward)  fd.append('ward',           ward);
-    if (phone) fd.append('phone',          phone);
-
-    fd.append('complaint_type', document.getElementById('f_type').value);
-    fd.append('details',        document.getElementById('f_details').value.trim());
-
-    selectedFiles.forEach(function (f, i) {
-      fd.append('attachment_' + (i + 1), f, f.name);
+    /* Copy selected files into the named hidden inputs via DataTransfer */
+    hiddenInputs.forEach(function (inp, i) {
+      try {
+        var dt = new DataTransfer();
+        if (selectedFiles[i]) dt.items.add(selectedFiles[i]);
+        inp.files = dt.files;
+      } catch (err) { /* older Safari: file won't attach but form still submits */ }
     });
 
-    fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        if (data.success) {
-          document.getElementById('formPage').style.display   = 'none';
-          document.getElementById('successPage').style.display = '';
-        } else {
-          throw new Error(data.message || 'Submission failed.');
-        }
-      })
-      .catch(function (err) {
-        banner.textContent = '⚠ ' + (err.message || 'Something went wrong. Please try again.');
-        banner.classList.add('show');
-        btn.disabled    = false;
-        btn.textContent = 'Submit Complaint';
-      });
+    var btn = document.getElementById('submitBtn');
+    btn.disabled    = true;
+    btn.textContent = 'Submitting…';
+
+    this.submit();
   });
 
 })();
