@@ -87,7 +87,7 @@ exports.handler = async (event) => {
 
     await resend.emails.send({
       from:    'WTS Complaint Form <onboarding@resend.dev>',
-      to:      ['EJCoalitionWTS@gmail.com'],
+      to:      ['ejcoalitionwts@gmail.com'],
       replyTo: fields.email || undefined,
       subject: fields.subject || 'Waste Transfer Station Complaint',
       html:    buildHtml(fields),
