@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waste Transfer Station Complaint</title>
+  <style>
+    :root {
+      --green:       #1a6b3c;
+      --green-dark:  #145530;
+      --green-light: #e8f5ee;
+      --green-mid:   #a7d7bb;
+      --red:         #dc2626;
+      --g50:  #f9fafb;
+      --g100: #f3f4f6;
+      --g200: #e5e7eb;
+      --g300: #d1d5db;
+      --g400: #9ca3af;
+      --g500: #6b7280;
+      --g600: #4b5563;
+      --g700: #374151;
+      --g800: #1f2937;
+      --g900: #111827;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--g100);
+      color: var(--g800);
+      line-height: 1.5;
+      padding: 2rem 1rem 3rem;
+      min-height: 100vh;
+    }
+
+    .container { max-width: 680px; margin: 0 auto; }
+
+    /* ─── Header ─────────────────────────────────── */
+    .site-header { text-align: center; margin-bottom: 2rem; }
+    .site-header .logo { font-size: 2.75rem; margin-bottom: .5rem; }
+    .site-header h1 {
+      font-size: 1.75rem; font-weight: 700;
+      color: var(--g900); margin-bottom: .375rem;
+    }
+    .site-header p { color: var(--g500); font-size: .9375rem; }
+
+    /* ─── Card ───────────────────────────────────── */
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-size: 1rem; font-weight: 600; color: var(--green);
+      margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .card-title::after { content:''; flex:1; height:1px; background:var(--g200); }
+
+    /* ─── Grid ───────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .span-2 { grid-column: 1 / -1; }
+
+    /* ─── Form groups ────────────────────────────── */
+    .fg { display: flex; flex-direction: column; gap: .3rem; }
+    label { font-size: .875rem; font-weight: 500; color: var(--g700); }
+    .opt { font-weight: 400; color: var(--g400); font-size: .8125rem; }
+    .req { color: var(--red); margin-left: .1rem; }
+
+    input[type=text],
+    input[type=email],
+    input[type=tel],
+    select,
+    textarea {
+      width: 100%;
+      padding: .625rem .875rem;
+      border: 1.5px solid var(--g300);
+      border-radius: 7px;
+      font-size: .9375rem;
+      color: var(--g800);
+      background: #fff;
+      font-family: inherit;
+      transition: border-color .15s, box-shadow .15s;
+      appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(26,107,60,.12);
+    }
+    .invalid { border-color: var(--red) !important; }
+    .err {
+      font-size: .8125rem; color: var(--red); display: none;
+    }
+    .err.on { display: block; }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%236b7280' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .75rem center;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+
+    textarea { min-height: 130px; resize: vertical; }
+
+    /* ─── Upload zone ────────────────────────────── */
+    .upload-zone {
+      border: 2px dashed var(--g300);
+      border-radius: 8px;
+      padding: 1.625rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      background: var(--g50);
+      transition: border-color .15s, background .15s;
+    }
+    .upload-zone:hover, .upload-zone.over {
+      border-color: var(--green);
+      background: var(--green-light);
+    }
+    .upload-zone input[type=file] {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      opacity: 0; cursor: pointer;
+    }
+    .upload-icon { font-size: 2.25rem; margin-bottom: .5rem; }
+    .upload-zone p { color: var(--g600); font-size: .875rem; }
+    .upload-zone .hint { color: var(--g400); font-size: .8125rem; margin-top: .3rem; }
+
+    /* ─── File list ──────────────────────────────── */
+    .file-list { display: flex; flex-direction: column; gap: .4rem; margin-top: .875rem; }
+    .pill {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .45rem .75rem;
+      background: var(--g50); border: 1px solid var(--g200);
+      border-radius: 6px; font-size: .875rem;
+    }
+    .pill .pi { font-size: 1.1rem; flex-shrink: 0; }
+    .pill .pn {
+      flex: 1; overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap; color: var(--g700);
+    }
+    .pill .ps { color: var(--g400); font-size: .8125rem; flex-shrink: 0; }
+    .pill button {
+      background: none; border: none; cursor: pointer;
+      color: var(--g400); font-size: .9rem; padding: .2rem .35rem;
+      border-radius: 4px; line-height: 1; flex-shrink: 0;
+      transition: color .15s, background .15s;
+    }
+    .pill button:hover { color: var(--red); background: #fee2e2; }
+    .tally { font-size: .8rem; color: var(--g400); text-align: right; margin-top: .4rem; }
+    .tally.full { color: var(--green); font-weight: 500; }
+
+    /* hidden file inputs */
+    .hfi { display: none; }
+
+    /* ─── Info note ──────────────────────────────── */
+    .note {
+      background: var(--green-light);
+      border: 1px solid var(--green-mid);
+      border-radius: 7px;
+      padding: .75rem 1rem;
+      font-size: .85rem;
+      color: var(--green-dark);
+      margin-top: .25rem;
+    }
+
+    /* ─── Submit ─────────────────────────────────── */
+    .submit-wrap { margin-top: 1.5rem; }
+    .btn-submit {
+      width: 100%;
+      padding: .9rem 1.5rem;
+      background: var(--green);
+      color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 1rem; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      transition: background .15s, opacity .15s;
+    }
+    .btn-submit:hover { background: var(--green-dark); }
+    .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+
+    /* ─── Success page ───────────────────────────── */
+    .success-page {
+      text-align: center;
+      padding: 4rem 1.5rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    .success-page .check { font-size: 4.5rem; margin-bottom: 1rem; }
+    .success-page h2 { font-size: 1.625rem; font-weight: 700; margin-bottom: .625rem; color: var(--g900); }
+    .success-page p { color: var(--g500); max-width: 380px; margin: 0 auto 2rem; }
+    .btn-again {
+      padding: .75rem 1.5rem; background: var(--green); color: #fff;
+      border: none; border-radius: 8px; font-size: .9375rem; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background .15s;
+    }
+    .btn-again:hover { background: var(--green-dark); }
+
+    /* ─── Responsive ─────────────────────────────── */
+    @media (max-width: 560px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .span-2 { grid-column: 1; }
+      .card { padding: 1.25rem; }
+      .site-header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ════════════════ SUCCESS STATE ════════════════ -->
+  <div id="successPage" style="display:none">
+    <div class="success-page">
+      <div class="check">✅</div>
+      <h2>Complaint Submitted</h2>
+      <p>
+        Thank you. Your complaint has been received by the EJ Coalition
+        and a copy has been sent to your email address.
+      </p>
+      <button class="btn-again" onclick="location.href=location.pathname">
+        Submit Another Complaint
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════ FORM PAGE ════════════════════ -->
+  <div id="formPage">
+
+    <header class="site-header">
+      <div class="logo">🏭</div>
+      <h1>Waste Transfer Station Complaint</h1>
+      <p>Submit a complaint to the Environmental Justice Coalition</p>
+    </header>
+
+    <form
+      id="complaintForm"
+      action="https://formsubmit.co/EJCoalitionWTS@gmail.com"
+      method="POST"
+      enctype="multipart/form-data"
+      novalidate
+    >
+      <!-- ── Formsubmit.co configuration ── -->
+      <input type="hidden" name="_captcha"  value="false">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_subject"  id="fs_subject" value="Waste Transfer Station Complaint">
+      <input type="hidden" name="_replyto"  id="fs_replyto" value="">
+      <input type="hidden" name="_next"     id="fs_next"    value="">
+
+      <!-- ── Hidden file inputs (populated via JS before submit) ── -->
+      <div class="hfi">
+        <input type="file" name="photo_1" id="hf1">
+        <input type="file" name="photo_2" id="hf2">
+        <input type="file" name="photo_3" id="hf3">
+        <input type="file" name="photo_4" id="hf4">
+        <input type="file" name="photo_5" id="hf5">
+      </div>
+
+      <!-- ══════════ CONTACT INFORMATION ══════════ -->
+      <div class="card">
+        <div class="card-title">Contact Information</div>
+        <div class="grid-2">
+
+          <div class="fg">
+            <label for="f_name">Full Name<span class="req">*</span></label>
+            <input type="text" id="f_name" name="name"
+                   autocomplete="name" placeholder="Jane Smith">
+            <span class="err" id="e_name">Please enter your full name.</span>
+          </div>
+
+          <div class="fg">
+            <label for="f_email">Email Address<span class="req">*</span></label>
+            <input type="email" id="f_email" name="email"
+                   autocomplete="email" placeholder="jane@example.com">
+            <span class="err" id="e_email">Please enter a valid email address.</span>
+          </div>
+
+          <div class="fg span-2">
+            <label for="f_address">
+              Address <span class="opt">(optional)</span>
+            </label>
+            <input type="text" id="f_address" name="address"
+                   autocomplete="street-address"
+                   placeholder="123 Main St, City, State 12345">
+          </div>
+
+          <div class="fg">
+            <label for="f_ward">
+              Ward <span class="opt">(optional)</span>
+            </label>
+            <input type="text" id="f_ward" name="ward"
+                   placeholder="e.g. Ward 5">
+          </div>
+
+          <div class="fg">
+            <label for="f_phone">
+              Phone Number <span class="opt">(optional)</span>
+            </label>
+            <input type="tel" id="f_phone" name="phone"
+                   autocomplete="tel" placeholder="(555) 555-5555">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══════════ COMPLAINT DETAILS ══════════ -->
+      <div class="card">
+        <div class="card-title">Complaint Details</div>
+        <div class="grid-2">
+
+          <div class="fg">
+            <label for="f_type">Complaint Type<span class="req">*</span></label>
+            <select id="f_type" name="complaint_type">
+              <option value="" disabled selected>Select a type…</option>
+              <option value="Trash / Eyesore">Trash / Eyesore</option>
+              <option value="Odor">Odor</option>
+              <option value="Noise">Noise</option>
+              <option value="Other">Other</option>
+            </select>
+            <span class="err" id="e_type">Please select a complaint type.</span>
+          </div>
+
+          <div class="fg">
+            <label for="f_subject">Subject<span class="req">*</span></label>
+            <input type="text" id="f_subject" name="subject"
+                   value="Waste Transfer Station Complaint">
+            <span class="err" id="e_subject">Subject cannot be empty.</span>
+          </div>
+
+          <div class="fg span-2">
+            <label for="f_details">
+              Details / Additional Information<span class="req">*</span>
+            </label>
+            <textarea
+              id="f_details" name="details"
+              placeholder="Please describe the issue in detail — include the date, time, and any other relevant information…"
+            ></textarea>
+            <span class="err" id="e_details">Please describe your complaint.</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══════════ PHOTOS & VIDEOS ══════════ -->
+      <div class="card">
+        <div class="card-title">
+          Photos &amp; Videos
+          <span style="font-weight:400;color:var(--g400);font-size:.85rem;margin-left:.25rem">
+            (optional &bull; up to 5 files &bull; 5 MB each)
+          </span>
+        </div>
+
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="f_files" accept="image/*,video/*" multiple>
+          <div class="upload-icon">📎</div>
+          <p><strong>Click to select files</strong> or drag &amp; drop here</p>
+          <p class="hint">Images &amp; videos accepted &bull; Maximum 5 files</p>
+        </div>
+
+        <span class="err" id="e_files" style="margin-top:.4rem;display:none"></span>
+        <div class="file-list" id="fileList"></div>
+        <div class="tally" id="tally" style="display:none"></div>
+      </div>
+
+      <div class="note">
+        &#8505;&#65039; Your complaint will be emailed to the EJ Coalition at
+        <strong>EJCoalitionWTS@gmail.com</strong>. Replies from the Coalition
+        will go directly to the email address you provided above.
+      </div>
+
+      <div class="submit-wrap">
+        <button type="submit" class="btn-submit" id="submitBtn">
+          Submit Complaint
+        </button>
+      </div>
+
+    </form>
+  </div><!-- /formPage -->
+
+</div><!-- /container -->
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Show success page if redirected back with ?submitted=1 ── */
+  if (new URLSearchParams(location.search).get('submitted') === '1') {
+    document.getElementById('formPage').style.display = 'none';
+    document.getElementById('successPage').style.display = '';
+  }
+
+  /* ── Sync visible email field → hidden _replyto ── */
+  var emailEl   = document.getElementById('f_email');
+  var replyToEl = document.getElementById('fs_replyto');
+  emailEl.addEventListener('input', function () {
+    replyToEl.value = emailEl.value.trim();
+  });
+
+  /* ── Sync visible subject field → hidden _subject ── */
+  var subjectEl  = document.getElementById('f_subject');
+  var fsSubject  = document.getElementById('fs_subject');
+  subjectEl.addEventListener('input', function () {
+    fsSubject.value = subjectEl.value.trim() || 'Waste Transfer Station Complaint';
+  });
+
+  /* ── File upload ─────────────────────────────────── */
+  var MAX_FILES  = 5;
+  var selectedFiles = [];
+
+  var zone     = document.getElementById('uploadZone');
+  var picker   = document.getElementById('f_files');
+  var listEl   = document.getElementById('fileList');
+  var tallyEl  = document.getElementById('tally');
+  var fileErr  = document.getElementById('e_files');
+  var hiddenInputs = [1,2,3,4,5].map(function (n) {
+    return document.getElementById('hf' + n);
+  });
+
+  picker.addEventListener('change', function () {
+    addFiles(Array.from(picker.files));
+    picker.value = '';
+  });
+
+  zone.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    zone.classList.add('over');
+  });
+  zone.addEventListener('dragleave', function () {
+    zone.classList.remove('over');
+  });
+  zone.addEventListener('drop', function (e) {
+    e.preventDefault();
+    zone.classList.remove('over');
+    addFiles(Array.from(e.dataTransfer.files));
+  });
+
+  function addFiles(incoming) {
+    for (var i = 0; i < incoming.length; i++) {
+      if (selectedFiles.length >= MAX_FILES) break;
+      var f = incoming[i];
+      var dupe = selectedFiles.some(function (x) {
+        return x.name === f.name && x.size === f.size;
+      });
+      if (!dupe) selectedFiles.push(f);
+    }
+    if (selectedFiles.length > MAX_FILES) {
+      selectedFiles = selectedFiles.slice(0, MAX_FILES);
+    }
+    render();
+  }
+
+  function removeFile(idx) {
+    selectedFiles.splice(idx, 1);
+    render();
+  }
+  window._removeFile = removeFile; // expose for inline onclick
+
+  function render() {
+    fileErr.style.display = 'none';
+    listEl.innerHTML = '';
+
+    if (!selectedFiles.length) {
+      tallyEl.style.display = 'none';
+      return;
+    }
+
+    selectedFiles.forEach(function (f, i) {
+      var icon = f.type.startsWith('video/') ? '🎥' : '🖼️';
+      var pill = document.createElement('div');
+      pill.className = 'pill';
+      pill.innerHTML =
+        '<span class="pi">' + icon + '</span>' +
+        '<span class="pn" title="' + esc(f.name) + '">' + esc(f.name) + '</span>' +
+        '<span class="ps">' + fmtSize(f.size) + '</span>' +
+        '<button type="button" onclick="window._removeFile(' + i + ')" ' +
+        'title="Remove" aria-label="Remove ' + esc(f.name) + '">&#x2715;</button>';
+      listEl.appendChild(pill);
+    });
+
+    var cnt = selectedFiles.length;
+    tallyEl.textContent = cnt + ' / ' + MAX_FILES + ' file' + (cnt !== 1 ? 's' : '') + ' selected';
+    tallyEl.className   = 'tally' + (cnt >= MAX_FILES ? ' full' : '');
+    tallyEl.style.display = 'block';
+  }
+
+  function fmtSize(b) {
+    if (b < 1024)    return b + ' B';
+    if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+    return (b / 1048576).toFixed(1) + ' MB';
+  }
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── Populate hidden inputs via DataTransfer ── */
+  function populateHiddenInputs() {
+    hiddenInputs.forEach(function (inp, i) {
+      try {
+        var dt = new DataTransfer();
+        if (selectedFiles[i]) dt.items.add(selectedFiles[i]);
+        inp.files = dt.files;
+      } catch (e) {
+        /* Safari <14.1 fallback: files won't attach but form still submits */
+      }
+    });
+  }
+
+  /* ── Field validation helper ── */
+  function check(fieldId, errId, testFn) {
+    var el  = document.getElementById(fieldId);
+    var err = document.getElementById(errId);
+    var ok  = testFn(el);
+    el.classList.toggle('invalid', !ok);
+    err.classList.toggle('on', !ok);
+    return ok;
+  }
+
+  /* ── Form submit ─────────────────────────────── */
+  document.getElementById('complaintForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    var allOk = [
+      check('f_name',    'e_name',    function (el) { return el.value.trim() !== ''; }),
+      check('f_email',   'e_email',   function (el) { return emailRegex.test(el.value.trim()); }),
+      check('f_type',    'e_type',    function (el) { return el.value !== ''; }),
+      check('f_subject', 'e_subject', function (el) { return el.value.trim() !== ''; }),
+      check('f_details', 'e_details', function (el) { return el.value.trim() !== ''; }),
+    ].every(Boolean);
+
+    if (!allOk) {
+      var firstBad = document.querySelector('.invalid');
+      if (firstBad) firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    /* Sync hidden fields one last time */
+    replyToEl.value = emailEl.value.trim();
+    fsSubject.value = subjectEl.value.trim() || 'Waste Transfer Station Complaint';
+
+    /* Tell Formsubmit.co where to redirect after success */
+    document.getElementById('fs_next').value =
+      location.origin + location.pathname + '?submitted=1';
+
+    /* Attach files to hidden inputs */
+    populateHiddenInputs();
+
+    /* Disable button and submit */
+    var btn = document.getElementById('submitBtn');
+    btn.disabled    = true;
+    btn.textContent = 'Submitting…';
+
+    this.submit();
+  });
+
+})();
+</script>
+</body>
+</html>
