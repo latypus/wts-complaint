@@ -251,26 +251,7 @@
       <p>Submit a complaint to the Environmental Justice Coalition</p>
     </header>
 
-    <form
-      id="complaintForm"
-      name="wts-complaint"
-      method="POST"
-      action="?submitted=1"
-      enctype="multipart/form-data"
-      data-netlify="true"
-      netlify-honeypot="bot-field"
-      novalidate
-    >
-      <input type="hidden" name="form-name" value="wts-complaint">
-      <p style="display:none"><input name="bot-field"></p>
-      <!-- Hidden file inputs populated via DataTransfer before submit -->
-      <div style="display:none">
-        <input type="file" name="photo_1" id="hf1">
-        <input type="file" name="photo_2" id="hf2">
-        <input type="file" name="photo_3" id="hf3">
-        <input type="file" name="photo_4" id="hf4">
-        <input type="file" name="photo_5" id="hf5">
-      </div>
+    <form id="complaintForm" novalidate>
 
       <!-- ══════════ CONTACT INFORMATION ══════════ -->
       <div class="card">
@@ -384,6 +365,8 @@
         will go directly to the email address you provided above.
       </div>
 
+      <div class="banner error" id="errBanner"></div>
+
       <div class="submit-wrap">
         <button type="submit" class="btn-submit" id="submitBtn">
           Submit Complaint
@@ -399,12 +382,6 @@
 (function () {
   'use strict';
 
-  /* ── Show success screen when Netlify redirects back ── */
-  if (new URLSearchParams(location.search).get('submitted') === '1') {
-    document.getElementById('formPage').style.display    = 'none';
-    document.getElementById('successPage').style.display = '';
-  }
-
   /* ── File upload UI ─────────────────────────────── */
   var MAX_FILES     = 5;
   var selectedFiles = [];
@@ -413,9 +390,6 @@
   var picker  = document.getElementById('f_files');
   var listEl  = document.getElementById('fileList');
   var tallyEl = document.getElementById('tally');
-  var hiddenInputs = [1,2,3,4,5].map(function (n) {
-    return document.getElementById('hf' + n);
-  });
 
   picker.addEventListener('change', function () {
     addFiles(Array.from(picker.files)); picker.value = '';
@@ -478,7 +452,7 @@
     return ok;
   }
 
-  /* ── Submit: validate → populate file inputs → submit ── */
+  /* ── Submit via Netlify Function ────────────────── */
   document.getElementById('complaintForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -497,20 +471,44 @@
       return;
     }
 
-    /* Copy selected files into the named hidden inputs via DataTransfer */
-    hiddenInputs.forEach(function (inp, i) {
-      try {
-        var dt = new DataTransfer();
-        if (selectedFiles[i]) dt.items.add(selectedFiles[i]);
-        inp.files = dt.files;
-      } catch (err) { /* older Safari: file won't attach but form still submits */ }
-    });
-
-    var btn = document.getElementById('submitBtn');
+    var btn    = document.getElementById('submitBtn');
+    var banner = document.getElementById('errBanner');
     btn.disabled    = true;
     btn.textContent = 'Submitting…';
+    banner.classList.remove('show');
 
-    this.submit();
+    var fd = new FormData();
+    fd.append('name',           document.getElementById('f_name').value.trim());
+    fd.append('email',          document.getElementById('f_email').value.trim());
+    fd.append('address',        document.getElementById('f_address').value.trim());
+    fd.append('ward',           document.getElementById('f_ward').value.trim());
+    fd.append('phone',          document.getElementById('f_phone').value.trim());
+    fd.append('complaint_type', document.getElementById('f_type').value);
+    fd.append('subject',        document.getElementById('f_subject').value.trim());
+    fd.append('details',        document.getElementById('f_details').value.trim());
+
+    selectedFiles.forEach(function (f, i) {
+      fd.append('photo_' + (i + 1), f, f.name);
+    });
+
+    fetch('/.netlify/functions/submit', { method: 'POST', body: fd })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          document.getElementById('formPage').style.display    = 'none';
+          document.getElementById('successPage').style.display = '';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          throw new Error(data.message || 'Submission failed.');
+        }
+      })
+      .catch(function (err) {
+        banner.textContent = '⚠ ' + (err.message || 'Something went wrong. Please try again.');
+        banner.classList.add('show');
+        btn.disabled    = false;
+        btn.textContent = 'Submit Complaint';
+        banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
   });
 
 })();

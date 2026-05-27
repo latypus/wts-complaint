@@ -1,0 +1,8 @@
+{
+  "name": "wts-complaint",
+  "version": "1.0.0",
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "resend": "^4.5.2"
+  }
+}
