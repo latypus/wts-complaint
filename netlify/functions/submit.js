@@ -86,7 +86,7 @@ exports.handler = async (event) => {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     await resend.emails.send({
-      from:    'WTS Complaint Form <onboarding@resend.dev>',
+      from:    'WTS Complaint Form <wtsfeedback@ejcoalitionevanston.org>',
       to:      ['ejcoalitionwts@gmail.com'],
       cc:      fields.email ? [fields.email] : undefined,
       replyTo: fields.email || undefined,
