@@ -55,9 +55,9 @@ function buildHtml(f) {
   return `<!DOCTYPE html>
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                    color:#1f2937;max-width:640px;margin:0 auto;padding:16px">
-  <h2 style="color:#1a6b3c;margin-bottom:4px">Waste Transfer Station Complaint</h2>
+  <h2 style="color:#1a6b3c;margin-bottom:4px">Waste Transfer Station Feedback</h2>
   <p style="color:#6b7280;font-size:14px;margin-top:0">
-    Submitted via the EJ Coalition complaint form
+    Submitted via the EJ Coalition feedback form
   </p>
   <table style="border-collapse:collapse;width:100%;margin-top:16px">
     ${row('Name',           f.name)}
@@ -65,7 +65,7 @@ function buildHtml(f) {
     ${row('Address',        f.address)}
     ${row('Ward',           f.ward)}
     ${row('Phone',          f.phone)}
-    ${row('Complaint Type', f.complaint_type)}
+    ${row('Feedback Type', f.feedback_type)}
     ${row('Subject',        f.subject)}
     ${row('Details',        f.details)}
   </table>
@@ -86,11 +86,11 @@ exports.handler = async (event) => {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     await resend.emails.send({
-      from:    'WTS Complaint Form <wtsfeedback@ejcoalitionevanston.org>',
+      from:    'WTS Feedback Form <wtsfeedback@ejcoalitionevanston.org>',
       to:      ['ejcoalitionwts@gmail.com'],
       cc:      fields.email ? [fields.email] : undefined,
       replyTo: fields.email || undefined,
-      subject: fields.subject || 'Waste Transfer Station Complaint',
+      subject: fields.subject || 'Waste Transfer Station Feedback',
       html:    buildHtml(fields),
       attachments: files.map(f => ({
         filename: f.filename,

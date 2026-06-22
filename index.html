@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waste Transfer Station Complaint — EJ Coalition Evanston</title>
+  <title>Waste Transfer Station Feedback — EJ Coalition Evanston</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -278,13 +278,13 @@
   <div id="successPage" style="display:none">
     <div class="success-page">
       <div class="check">✅</div>
-      <h2>Complaint Submitted</h2>
+      <h2>Feedback Submitted</h2>
       <p>
-        Thank you. Your complaint has been received by the EJ Coalition
+        Thank you. Your feedback has been received by the EJ Coalition
         and a copy has been sent to your email address.
       </p>
       <button class="btn-again" onclick="location.href=location.pathname">
-        Submit Another Complaint
+        Submit Another Feedback
       </button>
     </div>
   </div>
@@ -294,12 +294,12 @@
 
     <header class="site-header">
       <div class="org-name">EJ Coalition Evanston</div>
-      <h1>Waste Transfer Station<br>Complaint Form</h1>
-      <p>Submit a complaint to the Evanston Environmental Justice Coalition</p>
+      <h1>Waste Transfer Station<br>Feedback Form</h1>
+      <p>Submit a feedback to the Evanston Environmental Justice Coalition</p>
       <hr class="header-rule">
     </header>
 
-    <form id="complaintForm" novalidate>
+    <form id="feedbackForm" novalidate>
 
       <!-- ══════════ CONTACT INFORMATION ══════════ -->
       <div class="card">
@@ -348,27 +348,27 @@
         </div>
       </div>
 
-      <!-- ══════════ COMPLAINT DETAILS ══════════ -->
+      <!-- ══════════ FEEDBACK DETAILS ══════════ -->
       <div class="card">
-        <div class="card-title">Complaint Details</div>
+        <div class="card-title">Feedback Details</div>
         <div class="grid-2">
 
           <div class="fg">
-            <label for="f_type">Complaint Type<span class="req">*</span></label>
-            <select id="f_type" name="complaint_type">
+            <label for="f_type">Feedback Type<span class="req">*</span></label>
+            <select id="f_type" name="feedback_type">
               <option value="" disabled selected>Select a type…</option>
               <option value="Trash / Eyesore">Trash / Eyesore</option>
               <option value="Odor">Odor</option>
               <option value="Noise">Noise</option>
               <option value="Other">Other</option>
             </select>
-            <span class="err" id="e_type">Please select a complaint type.</span>
+            <span class="err" id="e_type">Please select a feedback type.</span>
           </div>
 
           <div class="fg">
             <label for="f_subject">Subject<span class="req">*</span></label>
             <input type="text" id="f_subject" name="subject"
-                   value="Waste Transfer Station Complaint">
+                   value="Waste Transfer Station Feedback">
             <span class="err" id="e_subject">Subject cannot be empty.</span>
           </div>
 
@@ -380,7 +380,7 @@
               id="f_details" name="details"
               placeholder="Please describe the issue in detail — include the date, time, and any other relevant information…"
             ></textarea>
-            <span class="err" id="e_details">Please describe your complaint.</span>
+            <span class="err" id="e_details">Please describe your feedback.</span>
           </div>
 
         </div>
@@ -408,7 +408,7 @@
       </div>
 
       <div class="note">
-        &#8505;&#65039; Your complaint will be emailed to the EJ Coalition at
+        &#8505;&#65039; Your feedback will be emailed to the EJ Coalition at
         <strong>EJCoalitionWTS@gmail.com</strong>. Replies from the Coalition
         will go directly to the email address you provided above.
       </div>
@@ -417,7 +417,7 @@
 
       <div class="submit-wrap">
         <button type="submit" class="btn-submit" id="submitBtn">
-          Submit Complaint
+          Submit Feedback
         </button>
       </div>
 
@@ -501,7 +501,7 @@
   }
 
   /* ── Submit via Netlify Function ────────────────── */
-  document.getElementById('complaintForm').addEventListener('submit', function (e) {
+  document.getElementById('feedbackForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
     var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -531,7 +531,7 @@
     fd.append('address',        document.getElementById('f_address').value.trim());
     fd.append('ward',           document.getElementById('f_ward').value.trim());
     fd.append('phone',          document.getElementById('f_phone').value.trim());
-    fd.append('complaint_type', document.getElementById('f_type').value);
+    fd.append('feedback_type', document.getElementById('f_type').value);
     fd.append('subject',        document.getElementById('f_subject').value.trim());
     fd.append('details',        document.getElementById('f_details').value.trim());
 
@@ -554,7 +554,7 @@
         banner.textContent = '⚠ ' + (err.message || 'Something went wrong. Please try again.');
         banner.classList.add('show');
         btn.disabled    = false;
-        btn.textContent = 'Submit Complaint';
+        btn.textContent = 'Submit Feedback';
         banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
   });
